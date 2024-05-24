@@ -16,7 +16,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: '*',
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
@@ -29,11 +29,18 @@ app.use(xss());
 
 app.use('/public', express.static('public'));
 
+// Define the root route
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to Dhruv’s Spotify Clone API');
+});
+
+// Define other routes
 app.use('/api/v1/songs', songRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/playlists', playlistRouter);
 app.use('/api/v1/search', searchRouter);
 
+// Handle undefined routes
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
