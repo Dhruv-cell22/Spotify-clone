@@ -14,9 +14,22 @@ const searchRouter = require('./routes/searchRoutes');
 
 const app = express();
 
+// Define allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:5173', // Local development URL
+  'https://spotify-clone-iiyy.vercel.app', // Deployed frontend URL on Vercel
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
